@@ -144,13 +144,15 @@
       50%      { transform: translateY(-14px) rotate(3deg); }
     }
 
+    /* FIX 1: intro title — increased line-height + padding-bottom to prevent descender clipping */
     .intro-title {
       font-family: 'Playfair Display', serif;
       font-size: clamp(2.6rem, 8vw, 5.8rem);
       font-weight: 900;
       font-style: italic;
       text-align: center;
-      line-height: 1.05;
+      line-height: 1.2;
+      padding-bottom: 0.18em;
       position: relative;
       z-index: 2;
       background: linear-gradient(140deg, #ffffff 0%, #c084fc 35%, #e63946 65%, #f9c74f 100%);
@@ -339,12 +341,14 @@
     }
     .hero-eyebrow::after { transform: scaleX(-1); }
 
+    /* FIX 2: hero name — increased line-height + padding-bottom to prevent descender clipping */
     .hero-name {
       font-family: 'Playfair Display', serif;
       font-size: clamp(5rem, 18vw, 13rem);
       font-weight: 900;
       font-style: italic;
-      line-height: 0.9;
+      line-height: 1.15;
+      padding-bottom: 0.12em;
       background: linear-gradient(160deg, #ffffff 0%, #e8d5ff 20%, #c084fc 45%, #e63946 70%, #f9c74f 100%);
       -webkit-background-clip: text;
       -webkit-text-fill-color: transparent;
@@ -354,13 +358,14 @@
       animation: fadeInUp 1.1s cubic-bezier(0.16,1,0.3,1) 0.6s forwards;
       position: relative;
     }
-    /* Outline text echo */
+    /* FIX 3: echo text matches new sizing */
     .hero-name-echo {
       font-family: 'Playfair Display', serif;
       font-size: clamp(5rem, 18vw, 13rem);
       font-weight: 900;
       font-style: italic;
-      line-height: 0.9;
+      line-height: 1.15;
+      padding-bottom: 0.12em;
       position: absolute;
       top: 0; left: 50%;
       transform: translateX(-50%);
@@ -498,7 +503,6 @@
       box-shadow: 0 20px 60px rgba(192,132,252,0.08), 0 0 0 1px rgba(192,132,252,0.08);
     }
 
-    /* Gradient top border revealed on hover */
     .about-card::before {
       content: '';
       position: absolute;
@@ -510,7 +514,6 @@
     }
     .about-card:hover::before { opacity: 1; }
 
-    /* Corner SVG accent */
     .about-card::after {
       content: '';
       position: absolute;
@@ -575,7 +578,6 @@
       gap: 0.8rem;
     }
 
-    /* GD Emblem — now with rotating ring SVG */
     .gd-emblem-wrap {
       position: relative;
       width: 130px; height: 130px;
@@ -1369,7 +1371,6 @@ class FWParticle {
   draw() {
     fwCtx.save();
     const twinkleA = this.twinkle ? this.alpha * (0.6 + 0.4 * Math.sin(this.t)) : this.alpha;
-    // tail
     for (let i = 0; i < this.tail.length; i++) {
       const p = this.tail[i];
       const ta = (i / this.tail.length) * twinkleA * 0.4;
@@ -1386,7 +1387,6 @@ class FWParticle {
     fwCtx.beginPath();
     fwCtx.arc(this.x, this.y, this.radius, 0, Math.PI*2);
     fwCtx.fill();
-    // glint cross
     if (twinkleA > 0.5 && this.twinkle) {
       fwCtx.globalAlpha = (twinkleA - 0.5) * 2;
       fwCtx.strokeStyle = '#fff';
@@ -1439,13 +1439,12 @@ function explode(x, y) {
   for (let i = 0; i < count; i++) {
     let angle = (i / count) * Math.PI * 2;
     let speed = 6 + Math.random() * 8;
-    if (type === 0) { /* random burst */ angle = Math.random() * Math.PI * 2; }
-    else if (type === 1) { /* ring */ speed = 9 + Math.random() * 2; }
-    else { /* star */ if (i % 5 === 0) speed *= 1.6; }
+    if (type === 0) { angle = Math.random() * Math.PI * 2; }
+    else if (type === 1) { speed = 9 + Math.random() * 2; }
+    else { if (i % 5 === 0) speed *= 1.6; }
     const c = i % 3 === 0 ? color2 : color;
     fwParticles.push(new FWParticle(x, y, c, speed, angle));
   }
-  // sparkle center
   for (let i = 0; i < 15; i++) {
     fwParticles.push(new FWParticle(x, y, '#ffffff', 2 + Math.random() * 4, Math.random() * Math.PI * 2));
   }
@@ -1462,7 +1461,6 @@ function animFW() {
   fwCtx.fillStyle = 'rgba(6,6,15,0.2)';
   fwCtx.fillRect(0, 0, fwCanvas.width, fwCanvas.height);
 
-  // trails
   trails = trails.filter(t => {
     t.draw();
     const done = t.update();
@@ -1470,7 +1468,6 @@ function animFW() {
     return !done;
   });
 
-  // particles
   fwParticles = fwParticles.filter(p => p.alpha > 0.02);
   fwParticles.forEach(p => { p.update(); p.draw(); });
 
@@ -1522,7 +1519,6 @@ function initReveal() {
   }, { threshold: 0.1 });
   els.forEach(el => obs.observe(el));
 
-  // Update cursor hover targets after main is visible
   document.querySelectorAll('a, button, .about-card, .memory-card').forEach(el => {
     el.addEventListener('mouseenter', () => { dot.classList.add('hovered'); ring.classList.add('hovered'); });
     el.addEventListener('mouseleave', () => { dot.classList.remove('hovered'); ring.classList.remove('hovered'); });
@@ -1630,7 +1626,6 @@ window.addEventListener('click', e => {
   });
 });
 
-// Keyboard close
 window.addEventListener('keydown', e => {
   if (e.key === 'Escape') document.querySelectorAll('.popup-overlay').forEach(p => p.style.display = 'none');
 });
